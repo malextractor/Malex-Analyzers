@@ -1,0 +1,1 @@
+docker run --rm -v /home/remnux/Documents/proj5a/malbaz/malware-bazaar-advanced-search/exe_remcos/test/32b99f669bb3adea7541c4a72235ac299ce6f83eef099097ee7a4043635188a6.exe:/app/32b99f669bb3adea7541c4a72235ac299ce6f83eef099097ee7a4043635188a6.exe remcos-extractor1 32b99f669bb3adea7541c4a72235ac299ce6f83eef099097ee7a4043635188a6.exe
