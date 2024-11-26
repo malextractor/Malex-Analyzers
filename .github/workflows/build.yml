@@ -27,8 +27,8 @@ jobs:
         run: |
           # Loop through all directories, ignoring .github folder
           for dir in $(find . -type f -name "Dockerfile" -not -path "./.github/*" -exec dirname {} \;); do
-            echo "Building and pushing Docker image for $dir"
             image_name="ghcr.io/${{ github.repository }}/$(basename $dir)"
+            image_name=$(echo "$image_name" | tr '[:upper:]' '[:lower:]')
             docker build -t $image_name $dir
             docker push $image_name
           done
@@ -40,6 +40,8 @@ jobs:
     steps:
     - name: Send Discord Notification
       run: |
+        COMMIT_MESSAGE="${{ github.event.head_commit.message }}"
+        COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" | tr '\n' ' ')
         curl -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \
         -H "Content-Type: application/json" \
         -d '{
@@ -52,7 +54,7 @@ jobs:
               "fields": [
                 {
                   "name": "Commit Message",
-                  "value": "${{ github.event.head_commit.message }}",
+                  "value": "$COMMIT_MESSAGE",
                   "inline": true
                 },
                 {
