@@ -50,7 +50,7 @@ jobs:
             {
               "title": "Build Status",
               "description": "Malex Analyzers build job completed",
-              "color": '"$(if [ "$BUILD_STATUS" == "success" ]; then echo 3066993; else echo 15158332; fi)"',
+              "color": '"$(if [ "${{ needs.build_analyzers.result }}" == "success" ]; then echo 3066993; else echo 15158332; fi)"',
               "fields": [
                 {
                   "name": "Commit Message",
