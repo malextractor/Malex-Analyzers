@@ -1,0 +1,66 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  build_analyzers:
+    name: Build Analyzers
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push Docker Images
+        run: |
+          # Loop through all directories, ignoring .github folder
+          for dir in $(find . -type f -name "Dockerfile" -not -path "./.github/*" -exec dirname {} \;); do
+            echo "Building and pushing Docker image for $dir"
+            image_name="ghcr.io/${{ github.repository }}/$(basename $dir)"
+            docker build -t $image_name $dir
+            docker push $image_name
+          done
+
+  notify:
+    needs: [build_analyzers]
+    runs-on: [ ubuntu-latest ]
+    if: always()
+    steps:
+    - name: Send Discord Notification
+      run: |
+        curl -X POST ${{ secrets.DISCORD_WEBHOOK_URL }} \
+        -H "Content-Type: application/json" \
+        -d '{
+          "content": "Malex Analyzers build finished.",
+          "embeds": [
+            {
+              "title": "Build Status",
+              "description": "Malex Analyzers build job completed",
+              "color": 3066993,
+              "fields": [
+                {
+                  "name": "Commit Message",
+                  "value": "${{ github.event.head_commit.message }}",
+                  "inline": true
+                },
+                {
+                  "name": "Job Status",
+                  "value": "${{ job.status }}",
+                  "inline": true
+                }
+              ]
+            }
+          ]
+        }'
