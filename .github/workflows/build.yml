@@ -54,12 +54,12 @@ jobs:
               "fields": [
                 {
                   "name": "Commit Message",
-                  "value": "$COMMIT_MESSAGE",
+                  "value": "'"${COMMIT_MESSAGE}"'",
                   "inline": true
                 },
                 {
-                  "name": "Job Status",
-                  "value": "${{ job.status }}",
+                  "name": "Build Status",
+                  "value": "${{ needs.build_analyzers.result }}",
                   "inline": true
                 }
               ]
