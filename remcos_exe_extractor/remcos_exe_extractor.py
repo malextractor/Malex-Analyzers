@@ -50,7 +50,6 @@ class Extractor:
         Extract key length, key and config data from rsrc. Decrypt and print config
         """
         try:
-            self.logger.critical(f'Extracting config from: {self.input_file}')       
 
             # Find Resource
             for rsrc in self.pe.DIRECTORY_ENTRY_RESOURCE.entries:
